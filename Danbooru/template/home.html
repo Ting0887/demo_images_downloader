@@ -1,0 +1,22 @@
+<meta charset="utf-8">
+<!Doctype>
+<html>
+<head>
+<title>Danbooru images download website</title>
+</head>
+<link rel="stylesheet" href="{{ url_for('static' ,filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='js/click.js') }}"></script>
+<body>
+<div class="container">
+    <div class="content">
+        <h2>Danbooru images downloader</h2>
+        <form action="" method='POST'>
+           關鍵字 : <input type="text" id="keyword" name="keyword" value="{{ keyword }}"> </br>
+           儲存資料夾名稱 : <input type="text" id="folderpath" name="folderpath" value="{{ folder_name }}" placeholder="ex:result"> </br>
+           頁數 : <input name="num_page" id="number" type="number" placeholder="10" value="{{ num_page }}">  </br>
+           <button id="download_button" onclick="click_download()">下載</button> </br>
+        </form>
+    </div>
+</div>
+</body>
+</html>
