@@ -1,10 +1,32 @@
-div.content{
-    text-align: center;
-    line-height: 30px;
+div.row{
+    text-align: left;
+    padding-left: 350px;
+    margin-top: 15px;
+}
+
+input{
+    line-height: 20px;
+}
+
+label{
+    font-weight: bold;
+}
+
+.content{
+    padding-left: 70px;
 }
 
 button{
     font-weight: bold;
     font-style: sans-serif;
     background-color: aqua;
+    margin-left: 150px;
+    height: 30px;
+    width: 80px;
+}
+
+.message{
+    font-weight: bold;
+    color: blue;
+    padding-left: 100px;
 }
