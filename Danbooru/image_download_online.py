@@ -1,6 +1,7 @@
 from threading import local
 from flask import Flask, render_template, request
 from scraper import Danbooru
+import time
 
 app = Flask('__name__', 
             template_folder='template',
@@ -11,9 +12,16 @@ app = Flask('__name__',
 def download():
     if request.method == 'POST':
         keyword = str(request.form.get('keyword')).replace(' ','_')
-        num_page = int(request.form.get('num_page'))
+        try:
+            num_page = int(request.form.get('num_page'))
+        except Exception as e:
+            print(e)
+        num_page = request.form.get('num_page')
         folder_name = str(request.form.get('folderpath'))
+        start = time.time()
         Danbooru(keyword, num_page, folder_name).scrape_bulk_images() 
+        end = time.time()
+        spend_time = round(end-start, 2)
         return render_template("Home.html",**locals())
     else:
         return render_template("Home.html")
