@@ -15,8 +15,8 @@ def download():
         try:
             num_page = int(request.form.get('num_page'))
         except Exception as e:
+            num_page = request.form.get('num_page')
             print(e)
-        num_page = request.form.get('num_page')
         folder_name = str(request.form.get('folderpath'))
         start = time.time()
         Danbooru(keyword, num_page, folder_name).scrape_bulk_images() 
