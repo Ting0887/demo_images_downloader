@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from threading import local
 from flask import Flask, render_template, request
 from scraper import Danbooru
 import time
@@ -21,13 +21,10 @@ def download():
         start = time.time()
         Danbooru(keyword, num_page, folder_name).scrape_bulk_images() 
         end = time.time()
-        spend_time = round(end-start, 2)    
-        return render_template("home.html",keyword=keyword, 
-                                num_page=num_page,
-                                folder_name=folder_name, 
-                                spend_time=spend_time)
+        spend_time = round(end-start, 2)
+        return render_template("Home.html",**locals())
     else:
-        return render_template("home.html")
+        return render_template("Home.html")
 
 if __name__ == '__main__':
-    app.run(debug=True, port='8844')
+    app.run(port='8844')
