@@ -1,7 +1,6 @@
 from threading import local
 from flask import Flask, render_template, request
 from scraper import Danbooru
-from scraper import url_encode
 import time
 
 app = Flask('__name__', 
