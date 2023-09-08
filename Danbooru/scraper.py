@@ -12,6 +12,16 @@ class Danbooru:
         self.page = page
         self.folder = folder
 
+    def check_notfound(self):
+        url = f'https://danbooru.donmai.us/posts?&tags={self.input_text}'
+        res = requests.get(url, headers=headers)
+        soup = BeautifulSoup(res.text,'lxml')
+        all_images = soup.find_all('div',id='posts')[0].find_all('a','post-preview-link')
+        if all_images == []:
+            error = 'image not found, try other keyword'
+            return error
+        else:
+            return 'image can be found'
     # when you want to scrape many pages, you can try it
     def scrape_bulk_images(self):
         with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
@@ -24,9 +34,6 @@ class Danbooru:
             res = requests.get(url,headers=headers)
             soup = BeautifulSoup(res.text,'lxml')
             all_images = soup.find_all('div',id='posts')[0].find_all('a','post-preview-link')
-            if all_images == []:
-                print('image not found, try other keyword')
-                break
             for image in all_images:
                 image_link = 'https://danbooru.donmai.us' + image['href'].split('?')[0] 
                 save_link.append(image_link)  
