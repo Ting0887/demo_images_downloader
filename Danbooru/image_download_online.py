@@ -11,7 +11,13 @@ app = Flask('__name__',
 @app.route('/danbooru_images_demo',methods=["GET","POST"])
 def download():
     if request.method == 'POST':
-        keyword = str(request.form.get('keyword')).replace(' ','_')
+        keyword = str(request.form.get('keyword'))
+        
+        # if keyword have _
+        if " " in keyword:
+            split_kws = keyword.split(" ")
+            keyword = split_kws[0] + "+" + split_kws[1]
+        print(keyword)        
         try:
             num_page = int(request.form.get('num_page'))
         except Exception as e:
@@ -19,12 +25,20 @@ def download():
             print(e)
         folder_name = str(request.form.get('folderpath'))
         start = time.time()
-        Danbooru(keyword, num_page, folder_name).scrape_bulk_images() 
-        end = time.time()
-        spend_time = round(end-start, 2)
-        return render_template("Home.html",**locals())
+        
+        danb = Danbooru(keyword, num_page, folder_name)
+        
+        # check image can be found
+        Notfound_err = danb.check_notfound()
+        if "image not found, try other keyword" in Notfound_err:
+            return render_template("Home.html", Notfound_err=Notfound_err)
+        else:
+            danb.scrape_bulk_images() 
+            end = time.time()
+            spend_time = round(end-start, 2)
+            return render_template("Home.html",**locals())
     else:
         return render_template("Home.html")
 
 if __name__ == '__main__':
-    app.run(port='8844')
+    app.run(port='8844', debug=True)
