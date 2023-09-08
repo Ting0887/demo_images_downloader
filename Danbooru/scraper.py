@@ -3,6 +3,9 @@ from bs4 import BeautifulSoup
 import os
 import concurrent.futures
 
+
+headers = {'User-Agent': 'Mozilla/5.0'}
+
 class Danbooru:
     def __init__(self, input_text, page, folder):
         self.input_text = input_text
@@ -18,7 +21,7 @@ class Danbooru:
         save_link = []
         for p in range(1, self.page+1):
             url = f'https://danbooru.donmai.us/posts?page={p}&tags={self.input_text}'
-            res = requests.get(url)
+            res = requests.get(url,headers=headers)
             soup = BeautifulSoup(res.text,'lxml')
             all_images = soup.find_all('div',id='posts')[0].find_all('a','post-preview-link')
             if all_images == []:
@@ -33,7 +36,7 @@ class Danbooru:
     def download_images(self, save_link):
         self.build_folder()
         for link in save_link:
-            res = requests.get(link)
+            res = requests.get(link, headers=headers)
             soup = BeautifulSoup(res.text, 'lxml')
             img = soup.select('#content')[0].find('img')['src']
             self.save_images(img)
@@ -43,7 +46,7 @@ class Danbooru:
             os.mkdir(self.folder)
 
     def save_images(self, img):
-        img_content = requests.get(img).content
+        img_content = requests.get(img, headers=headers).content
         img_filename = img.split('/')[-1]
         with open(f"{self.folder}/{img_filename}",'wb') as f:
             f.write(img_content)
