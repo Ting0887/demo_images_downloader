@@ -1,6 +1,7 @@
-from threading import local
+from django.shortcuts import render
 from flask import Flask, render_template, request
-from scraper import Danbooru
+from scraper import DanbooruArtistWork
+from scraper import DanbooruUserFav
 import time
 
 app = Flask('__name__', 
@@ -8,38 +9,52 @@ app = Flask('__name__',
             static_folder = 'static',
             static_url_path='/static')
 
-@app.route('/danbooru_images_demo',methods=["GET","POST"])
-def download():
+@app.route('/search_artistwork',methods=["GET","POST"])
+def download_artistWork():
     if request.method == 'POST':
-        keyword = str(request.form.get('keyword'))
-        
-        # if keyword only have _
-        if " " in keyword:
-            split_kws = keyword.split(" ")
-            final_keyword = split_kws[0] + "+" + split_kws[1]
-        else:
-            final_keyword = keyword
+        keyword = str(request.form.get('keyword')).replace(' ','_')
         try:
             num_page = int(request.form.get('num_page'))
         except Exception as e:
             num_page = request.form.get('num_page')
-        
+            print(e)
         folder_name = str(request.form.get('folderpath'))
         start = time.time()
-        
-        danb = Danbooru(final_keyword, num_page, folder_name)
-        
-        # check image can be found
-        Notfound_err = danb.check_notfound()
-        if "image not found, try other keyword" in Notfound_err:
-            return render_template("Home.html", Notfound_err=Notfound_err)
-        else:
-            danb.scrape_bulk_images() 
-            end = time.time()
-            spend_time = round(end-start, 2)
-            return render_template("Home.html",**locals())
+        DanbooruArtistWork(num_page, folder_name, keyword).scrape_images()
+        end = time.time()
+        spend_time = round(end-start, 2)    
+        return render_template("search_artist.html",keyword=keyword, 
+                                num_page=num_page,
+                                folder_name=folder_name, 
+                                spend_time=spend_time)
     else:
-        return render_template("Home.html")
+        return render_template("search_artist.html")
+
+@app.route('/search_userfav',methods=["GET","POST"])
+def download_userFav():
+    if request.method == 'POST':
+        keyword = str(request.form.get('keyword')).replace(' ','_')
+        try:
+            num_page = int(request.form.get('num_page'))
+        except Exception as e:
+            num_page = request.form.get('num_page')
+            print(e)
+        folder_name = str(request.form.get('folderpath'))
+        start = time.time()
+        DanbooruUserFav(num_page, folder_name, keyword).scrape_images()
+        end = time.time()
+        spend_time = round(end-start, 2)    
+        return render_template("search_user.html",keyword=keyword, 
+                                num_page=num_page,
+                                folder_name=folder_name, 
+                                spend_time=spend_time)
+    else:
+        return render_template("search_user.html")
+
+
+@app.route('/home',methods=['GET','POST'])
+def home():
+    return render_template("home.html")
 
 if __name__ == '__main__':
-    app.run(port='8844', debug=True)
+    app.run(debug=True, port='8844')
