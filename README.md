@@ -4,4 +4,4 @@
     * bikini
     * kagerou_(kancolle) bike_shorts
 * url
-    * http://127.0.0.1:8844/danbooru_images_demo
+    * http://127.0.0.1:8844/home
